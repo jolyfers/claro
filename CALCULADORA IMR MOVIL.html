@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de IMR</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        label, input {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        input[type="number"], input[type="text"] {
+            width: 200px;
+            padding: 10px;
+            font-size: 1.2em;
+            text-align: center;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .segmento {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 400px;
+            margin: 15px 0;
+        }
+        .segmento label {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #limpiar {
+            background-color: #dc3545;
+        }
+        #limpiar:hover {
+            background-color: #c82333;
+        }
+        #resultadoIMR {
+            margin-top: 20px;
+            font-size: 1.5em;
+            color: #007bff;
+        }
+        .resultado-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        #imrOutput {
+            font-size: 1.5em;
+            width: 150px;
+            text-align: center;
+            margin-right: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+    <script>
+        function calcularIMR() {
+            let fechaActivacionInput = document.getElementById("fechaActivacion").value.trim();
+            fechaActivacionInput = fechaActivacionInput.replace(/\s+/g, ''); // Eliminar espacios en blanco
+            let fechaActivacion = new Date(fechaActivacionInput.split("/").reverse().join("-"));
+            let cargoFijo = parseFloat(document.getElementById("cargoFijo").value);
+            let descuentosPrevios = parseFloat(document.getElementById("descuentosPrevios").value) || 0;
+            let segmento = document.querySelector('input[name="segmento"]:checked')?.value;
+
+            if (isNaN(cargoFijo) || !fechaActivacion || !segmento) {
+                document.getElementById("imrOutput").value = "Error";
+                return;
+            }
+
+            let fechaActual = new Date();
+            let diferenciaMeses = (fechaActual.getFullYear() - fechaActivacion.getFullYear()) * 12 + fechaActual.getMonth() - fechaActivacion.getMonth();
+
+            let valorSegmento = 0;
+
+            switch (segmento) {
+                case 'P':
+                    valorSegmento = 4.55;
+                    break;
+                case 'A':
+                    valorSegmento = 3.21;
+                    break;
+                case 'B':
+                    valorSegmento = 2.81;
+                    break;
+                case 'C':
+                    valorSegmento = 2.51;
+                    break;
+                case 'S':
+                    valorSegmento = 1.00;
+                    break;
+                default:
+                    valorSegmento = 0;
+                    break;
+            }
+
+            let resultadoIMR;
+            if (diferenciaMeses < 3) {
+                resultadoIMR = cargoFijo - descuentosPrevios;
+            } else {
+                resultadoIMR = (cargoFijo * valorSegmento) - descuentosPrevios;
+            }
+
+            document.getElementById("imrOutput").value = resultadoIMR.toFixed(2);
+        }
+
+        function copiarIMR() {
+            let imrOutput = document.getElementById("imrOutput");
+            imrOutput.select();
+            document.execCommand("copy");
+        }
+
+        function limpiarCampos() {
+            document.getElementById("fechaActivacion").value = '';
+            document.getElementById("cargoFijo").value = '';
+            document.getElementById("descuentosPrevios").value = '';
+            document.getElementById("imrOutput").value = '';
+            document.querySelectorAll('input[name="segmento"]').forEach((elem) => elem.checked = false);
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de IMR</h1>
+        
+        <label for="fechaActivacion">Fecha de Activación:</label>
+        <input type="text" id="fechaActivacion" placeholder="dd/mm/aaaa" required>
+
+        <label for="cargoFijo">Cargo Fijo:</label>
+        <input type="number" id="cargoFijo" step="0.01" required>
+
+        <label>Segmento:</label>
+        <div class="segmento">
+            <input type="radio" id="P" name="segmento" value="P" required>
+            <label for="P">P</label>
+            <input type="radio" id="A" name="segmento" value="A">
+            <label for="A">A</label>
+            <input type="radio" id="B" name="segmento" value="B">
+            <label for="B">B</label>
+            <input type="radio" id="C" name="segmento" value="C">
+            <label for="C">C</label>
+            <input type="radio" id="S" name="segmento" value="S">
+            <label for="S">S</label>
+        </div>
+
+        <label for="descuentosPrevios">Descuentos Previos:</label>
+        <input type="number" id="descuentosPrevios" step="0.01" placeholder="0.00">
+
+        <button type="button" onclick="calcularIMR()">Calcular IMR</button>
+        <button id="limpiar" type="button" onclick="limpiarCampos()">Limpiar</button>
+
+        <div class="resultado-container">
+            <input type="text" id="imrOutput" readonly>
+            <button type="button" onclick="copiarIMR()">Copiar</button>
+        </div>
+    </div>
+</body>
+</html>

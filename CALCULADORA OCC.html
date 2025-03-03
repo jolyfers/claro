@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Ajustes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        label, input {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        input[type="number"], input[type="text"] {
+            width: 180px;
+            padding: 10px;
+            font-size: 1.2em;
+            text-align: center;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result-group {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 500px;
+        }
+        .result-group input {
+            width: calc(100% - 150px);
+        }
+    </style>
+    <script>
+        function calcularTodo() {
+            let cargoFijo = parseFloat(document.getElementById("cargoFijo").value);
+
+            if (isNaN(cargoFijo)) {
+                document.getElementById("resultado20").value = "";
+                document.getElementById("resultado50").value = "";
+                document.getElementById("resultado30").value = "";
+                document.getElementById("resultado35").value = "";
+                document.getElementById("resultadoPersonalizado").value = "";
+                return;
+            }
+
+            document.getElementById("resultado20").value = (cargoFijo * 0.20).toFixed(2);
+            document.getElementById("resultado50").value = (cargoFijo * 0.50).toFixed(2);
+            document.getElementById("resultado30").value = (cargoFijo * 0.30).toFixed(2);
+            document.getElementById("resultado35").value = (cargoFijo * 0.35).toFixed(2);
+
+            let porcentajePersonalizado = parseFloat(document.getElementById("porcentajePersonalizado").value);
+            if (!isNaN(porcentajePersonalizado)) {
+                document.getElementById("resultadoPersonalizado").value = (cargoFijo * (porcentajePersonalizado / 100)).toFixed(2);
+            }
+        }
+
+        function copiarAlPortapapeles(resultadoId) {
+            let resultado = document.getElementById(resultadoId);
+            resultado.select();
+            document.execCommand("copy");
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Ajustes</h1>
+        
+        <label for="cargoFijo">Monto del Cargo Fijo:</label>
+        <input type="number" id="cargoFijo" step="0.01" required oninput="calcularTodo()">
+
+        <!-- Opciones frecuentes -->
+        <h2>Descuentos Frecuentes</h2>
+
+        <div class="result-group">
+            <input type="text" id="resultado20" readonly placeholder="20%">
+            <button type="button" onclick="copiarAlPortapapeles('resultado20')">Copiar 20%</button>
+        </div>
+        
+        <div class="result-group">
+            <input type="text" id="resultado30" readonly placeholder="30%">
+            <button type="button" onclick="copiarAlPortapapeles('resultado30')">Copiar 30%</button>
+        </div>
+
+        <div class="result-group">
+            <input type="text" id="resultado35" readonly placeholder="35%">
+            <button type="button" onclick="copiarAlPortapapeles('resultado35')">Copiar 35%</button>
+        </div>
+
+        <div class="result-group">
+            <input type="text" id="resultado50" readonly placeholder="50%">
+            <button type="button" onclick="copiarAlPortapapeles('resultado50')">Copiar 50%</button>
+        </div>
+
+        <!-- Porcentaje personalizado -->
+        <h2>Porcentaje Personalizado</h2>
+        <input type="number" id="porcentajePersonalizado" step="0.01" placeholder="Ingresa porcentaje" oninput="calcularTodo()">
+        
+        <div class="result-group">
+            <input type="text" id="resultadoPersonalizado" readonly placeholder="Resultado">
+            <button type="button" onclick="copiarAlPortapapeles('resultadoPersonalizado')">Copiar</button>
+        </div>
+    </div>
+</body>
+</html>
